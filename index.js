@@ -17,53 +17,72 @@ app.get('/form', (req, res) => res.render('pages/form'));
 
 // set up a rule that says requests to "/math" should be handled by the
 // handleMath function below
-app.get('/math', handleMath);
-  
+//app.get('/findRate', /javascripts/calculateRate/setPostageParams);
+app.get('/findRate', setPostageParams);  
+
 // start the server listening
 //app.listen(port, function() {console.log('Node app is running on port', port);});
 app.listen(PORT, () => console.log(`Listening on port ${ PORT }`));
-  
-  
-  /**********************************************************************
-   * Ideally the functions below here would go into a different file
-   * but for ease of reading this example and seeing all of the pieces
-   * they are listed here.
-   **********************************************************************/
-  
-  function handleMath(request, response) {
-    const operation = request.query.operation;
-    const operand1 = Number(request.query.operand1);
-    const operand2 = Number(request.query.operand2);
-  
-    // TODO: Here we should check to make sure we have all the correct parameters
-  
-    computeOperation(response, operation, operand1, operand2);
-  }
-  
-  function computeOperation(response, op, left, right) {
-    op = op.toLowerCase();
-  
-    let result = 0;
-  
-    if (op == "add") {
-      result = left + right;
-    } else if (op == "subtract") {
-      result = left - right;		
-    } else if (op == "multiply") {
-      result = left * right;
-    } else if (op == "divide") {
-      result = left / right;
-    } else {
-      // It would be best here to redirect to an "unknown operation"
-      // error page or something similar.
+
+function setPostageParams(request, response) {
+  var weight = request.query.weight;
+  var mailType = request.query.mailType;
+  var price = 0;
+
+  calculatePostageRate(response, weight, mailType, price);
+}
+
+function calculatePostageRate(response, weight, mailType, price) {
+
+  if (mailType == 'Letter (Stamped)') {
+    if (weight <= 1) {
+        price = 0.55;
+    } else if (weight <= 2) {
+        price = 0.75;
+    } else if (weight <= 3) {
+        price = 0.95;
+    } else if (weight <= 3.5) {
+        price = 1.15;
     }
-  
-    // Set up a JSON object of the values we want to pass along to the EJS result page
-    const params = {operation: op, left: left, right: right, result: result};
-  
-    // Render the response, using the EJS page "result.ejs" in the pages directory
-    // Makes sure to pass it the parameters we need.
-    response.render('pages/result', params);
-  
   }
 
+  if (mailType == 'Letter (Metered)') {
+    if (weight <= 1) {
+        price = 0.51;
+    } else if (weight <= 2) {
+        price = 0.71;
+    } else if (weight <= 3) {
+        price = 0.91;
+    } else if (weight <= 3.5) {
+        price = 1.11;
+    }
+  }
+
+  if (mailType == 'Large Envelope (Flat)') {
+    if (weight <= 1) {
+        price = 1.00;
+    } else if (weight <= 2) {
+        price = 1.20;
+    } else if (weight <= 3) {
+        price = 1.40;
+    } else if (weight <= 4) {
+        price = 1.60;
+    }
+  }
+
+  if (mailType == 'First-Class Package Service - Retail') {
+    if (weight <= 1) {
+        price = 4.00;
+    } else if (weight <= 2) {
+        price = 4.00;
+    } else if (weight <= 3) {
+        price = 4.00;
+    } else if (weight <= 4) {
+        price = 4.00;
+    }
+  }
+
+  const params = { weight: weight, mailType: mailType, price: price };
+
+  response.render('pages/result', params);
+}

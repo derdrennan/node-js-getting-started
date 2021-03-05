@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Postal Rate Calculator</title>
+</head>
+<body>
+	<h1>Postal Rate Calculator</h1>
+	<form action="/findRate" method="get">
+		<!-- <select name="operation">
+			<option>Add</option>
+			<option>Subtract</option>
+			<option>Multiply</option>
+			<option>Divide</option>
+		</select> -->
+		<input type="number" name="weight">Parcel weight (grams): </input><br><br>
+
+		<input type="radio" id ="stamped" name="mailType" value="stamped">
+		<label for="stamped">Letters (Stamped)</label><br>
+		<input type="radio" id ="metered" name="mailType" value="metered">
+		<label for="metered">Letters (Metered)</label><br>
+		<input type="radio" id ="largeFlat" name="mailType" value="largeFlat">
+		<label for="largeFlat">Large Envelopes (Flats)</label><br>
+		<input type="radio" id ="1stClassRetail" name="mailType" value="1stClassRetail">
+		<label for="1stClassRetail">First-Class Package Service - Retail</label><br>
+
+		<!-- <input type="text" name="operand1">
+		<input type="text" name="operand2"> -->
+
+		<br><br>
+		<input type="submit" value="Get Result">
+
+	</form>
+</body>
+</html>

@@ -2,8 +2,19 @@
 <html>
 <head>
 	<title>Postal Rate Calculator</title>
+	<%- include ("../partials/header.ejs") %>
 </head>
 <body>
+	<%- include ("../partials/nav.ejs") %>
+
+	<div class="jumbotron text-center">
+		<div class="container">
+			<h1>Postal Rate Calculator</h1>
+			<p>Select a letter/package type and enter a weight in ounces.</p>
+		</div>
+	</div>
+
+ <div class="container">
 	<h1>Postal Rate Calculator</h1>
 	<form action="/findRate" method="get">
 		
@@ -11,10 +22,13 @@
 
 		<input type="radio" id ="stamped" name="mailType" value="Letter (Stamped)">
 		<label for="stamped">Letters (Stamped)</label><br>
+
 		<input type="radio" id ="metered" name="mailType" value="Letter (Metered)">
 		<label for="metered">Letters (Metered)</label><br>
+
 		<input type="radio" id ="largeFlat" name="mailType" value="Large Envelope (Flat)">
 		<label for="largeFlat">Large Envelopes (Flats)</label><br>
+		
 		<input type="radio" id ="1stClassRetail" name="mailType" value="First-Class Package Service - Retail">
 		<label for="1stClassRetail">First-Class Package Service - Retail</label><br>
 
@@ -22,5 +36,7 @@
 		<input type="submit" value="Get Result">
 
 	</form>
+ </div>
+
 </body>
 </html>

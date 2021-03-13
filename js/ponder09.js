@@ -60,3 +60,5 @@ function setPostageParams(request, response) {
   
     response.render('pages/result', params);
   }
+
+  module.exports = { setPostageParams: setPostageParams };

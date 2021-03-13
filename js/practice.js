@@ -1,5 +1,5 @@
 //const matchAll = require("match-all");
-function getWotReplayURLs(replies){
+//function getWotReplayURLs(replies){
   const repliesToTweet = [
     'http://wotreplays.eu/site/5801309#live_oaks-tru_voodoo-manticore',
     'Here is my replay http://wotreplays.eu/site/5387887#paris-tru_voodoo-object_430u test',
@@ -18,12 +18,12 @@ function getWotReplayURLs(replies){
   
   var tweetArray = [];
   
-  replies.forEach(element => {
+  repliesToTweet.forEach(element => {
      const url = element.match(regEx);
      tweetArray.push(url);
   });
   
   console.log(tweetArray);
-}
+//}
 
-module.exports = { getWotReplayURLs: getWotReplayURLs };
+//module.exports = { getWotReplayURLs: getWotReplayURLs };

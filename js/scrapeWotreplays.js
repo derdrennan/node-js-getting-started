@@ -35,3 +35,5 @@ function getUserGameData(){
     console.log(err);
   });
 }
+
+module.exports = { getUserGameData: getUserGameData };

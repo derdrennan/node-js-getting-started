@@ -23,7 +23,8 @@ function getWotReplayURLs(replies){
      tweetArray.push(url);
   });
   
-  console.log(tweetArray);
+  return tweetArray;
+  //console.log(tweetArray);
 }
 
 module.exports = { getWotReplayURLs: getWotReplayURLs };

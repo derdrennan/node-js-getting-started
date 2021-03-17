@@ -10,20 +10,20 @@ function setParams(request, response) {
   findWinners(response, xp, twitterURL, startDate, endDate);
 }
 
+
 async function findWinners(response, xp, twitterURL, startDate, endDate) {
   console.log("hi");
   
   var replies = await twitterFetch.getTweetReplies(twitterURL)
-   .then(data => console.log(data))
-   .catch(err => console.log(err));
-
-   
-  console.log(replies);
+    //.then(data => console.log(data))
+    //.catch(err => console.log(err));
 
   //Set the params we will be returning to the view.
+  //console.log(replies);
   const params = { replies: replies};
 
   response.render('pages/twitterResult', params);
 }
+
 
 module.exports = { setParams: setParams };

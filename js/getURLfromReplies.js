@@ -1,4 +1,6 @@
-function getWotReplayURLs(replies){
+async function getWotReplayURLs(replies){
+
+return new Promise((resolve, reject) => {
   //For testing
   // const repliesToTweet = [
   //   'http://wotreplays.eu/site/5801309#live_oaks-tru_voodoo-manticore',
@@ -11,20 +13,27 @@ function getWotReplayURLs(replies){
   //   'http://wotreplays.eu/site/5277092#fjords-tru_voodoo-kampfpanzer_50_t word'
   // ];
   
-  const tweet = 'Here is my replay http://wotreplays.eu/site/5801309#live_oaks-tru_voodoo-manticore';
-  
-  // /g needed at end of regex or it will throw an error when used with matchAll
+  //const tweet = 'Here is my replay http://wotreplays.eu/site/5801309#live_oaks-tru_voodoo-manticore';
   const regEx = /(https?|ftp):\/\/(-\.)?([^\s/?\.#-]+\.?)+(\/[^\s]*)?(?=\s|$)/g;
   
   var tweetArray = [];
+  var counter = 0;
   
-  repliesToTweet.forEach(element => {
-     const url = element.match(regEx);
-     tweetArray.push(url);
-  });
+  try {
+    replies.forEach(element => {
+      counter++;
+      const url = element.match(regEx);
+      tweetArray.push(url);
   
-  return tweetArray;
+      if (counter == replies.length) {
+        resolve(tweetArray);
+      }
+    });
+  } catch (error) {
+    reject(error);
+  }
   //console.log(tweetArray);
+  });
 }
 
 module.exports = { getWotReplayURLs: getWotReplayURLs };

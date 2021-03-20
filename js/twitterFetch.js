@@ -19,25 +19,29 @@ async function getTweetReplies(ID) {
     var params = {id: ID};
     var replies=[];
   
-    //This is so I can get the user name and id_str to run the next query
+    //Get the info needed for the second query
     twitter.get('statuses/show', params, async function(error, tweets, response) {
     if (!error) {
       var name = tweets.user.screen_name;
       var id_str = tweets.id_str;
+      //console.log(tweets);
       
       //Searching tweets that match a specific username. Then we look at each one and if someone
       //replied to that tweet, the 'in_reply_to_status_id' will match the 'id_str' so we save those.
-      twitter.get('search/tweets', { q: name, count: 100 }, async function(error, tweets, response) { 
+      twitter.get('search/tweets', { q: name, count: 100, fields: "entities" }, async function(error, tweets, response) { 
         var counter = 0;
 
         if(!error) {
-          //console.log(tweets);
           tweets.statuses.forEach(element => {
+            //console.log(element);
             counter ++;
           if (element.in_reply_to_status_id_str == id_str) {
-            replies.push(element.text);
+            //replies.push(element.text);
+            //console.log(element.entities.urls[0].expanded_url);
+            replies.push(element.entities.urls[0].expanded_url);
           }
           if (counter == tweets.statuses.length){
+            //console.log('Right before the return: ' + replies);
             resolve(replies);
           }
         }); 
@@ -45,17 +49,12 @@ async function getTweetReplies(ID) {
           console.log(error);
           reject(err);
         }
-        //console.log(replies);
-        //resolve(replies);
-        //return await replies;
-
       });
     } else {
       console.log(error);
       reject(err);
     }
   });
-
   });
 }
 

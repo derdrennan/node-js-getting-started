@@ -1,5 +1,7 @@
-const twitterFetch = require ('./twitterFetch.js');
-const util = require('util');
+const twitterFetch = require("./twitterFetch.js");
+const { getWotReplayURLs } = require("./getURLfromReplies.js");
+const { getContestantStats } = require("./scrapeWotreplays.js");
+const util = require("util");
 
 function setParams(request, response) {
   var xp = request.query.xp;
@@ -10,20 +12,26 @@ function setParams(request, response) {
   findWinners(response, xp, twitterURL, startDate, endDate);
 }
 
+//test twitter ID: 1372356771478528003;
 
 async function findWinners(response, xp, twitterURL, startDate, endDate) {
-  console.log("hi");
-  
-  var replies = await twitterFetch.getTweetReplies(twitterURL)
-    //.then(data => console.log(data))
-    //.catch(err => console.log(err));
+  //Get all the replies for the selected tweet
+  var replies = await twitterFetch.getTweetReplies(twitterURL);
+  console.log(replies);
+  //Grab the wotreplay.com URL from each reply
+  var replayURLlist = await getWotReplayURLs(replies);
+  //console.log("In find winners URL list: " + replayURLlist);
+  //console.log("In find winners URL list length: " + replayURLlist.length);
+
+  var contestantStatList = await getContestantStats(replayURLlist);
+  const stringify = JSON.stringify(contestantStatList, null, 2);
+  console.log("Contestant Stat List: " + stringify);
 
   //Set the params we will be returning to the view.
   //console.log(replies);
-  const params = { replies: replies};
+  const params = { replies, replayURLlist, stringify };
 
-  response.render('pages/twitterResult', params);
+  response.render("pages/twitterResult", params);
 }
-
 
 module.exports = { setParams: setParams };

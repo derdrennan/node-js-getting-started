@@ -5,55 +5,67 @@ async function getContestantStats(replayURLlist) {
   var statsArray = [];
 
   for (var i = 0; i < replayURLlist.length; i++) {
-    //console.log("Inside first for loop");
-    //console.log("Replay: " + replayURLlist[i]);
-    console.log(replayURLlist[i][0]);
     var url = replayURLlist[i][0];
+    var html = await getHTMLfromWotreplays(url);
+    var [playerStats, gameTime] = getContestantGameInfo(html);
+    var twitterUsername = replayURLlist[i][1];
 
-    var [playerList, userName] = await getPlayerListFromWotreplays(url);
-    var playerStats = getContestantStatsFromPlayerList(playerList, userName);
-    console.log(playerStats);
-    statsArray.push(playerStats);
+    statsArray.push([playerStats, twitterUsername, gameTime]);
   }
   return statsArray;
 }
 
-async function getPlayerListFromWotreplays(url) {
-  return await rp(url)
-    .then(function (html) {
-      //Scraping the username of the contestant
-      //var userName = $('.link--white', html).text();
-      const regEx = /var roster = (\[.*?\]);/g;
-      const userRegex = /([^\s]+)/g;
-      const user = $(".replay-stats__username", html).text();
-      const userName = user.match(userRegex)[0];
-
-      console.log("Username is: " + userName);
-
-      //gameStats now contains the data for every single
-      //player in the match.
-      const gameStats = html.matchAll(regEx);
-
-      for (const match of gameStats) {
-        //If we don't do match[1], the data will have 'var roster'
-        //in front of it, and we can't JSON.parse. The actual JSON is group
-        //1 from the regex, therefore match[1] is parsed.
-        const playerList = JSON.parse(match[1]);
-        //console.log(obj);
-
-        return [playerList, userName];
-      }
-    })
-    .catch(function (error) {
-      console.log(error);
-      return [];
-    });
+async function getHTMLfromWotreplays(url) {
+  return await rp(url[0]).catch(function (error) {
+    console.log(error);
+    return [];
+  });
 }
 
-function getContestantStatsFromPlayerList(playerList, userName) {
+function getContestantGameInfo(html) {
+  gamerTag = getGamertagFromHTML(html);
+  playerList = getPlayerListFromHTML(html);
+  gameTime = getGameTimeFromHTML(html);
+  playerStats = getContestantStatsFromPlayerList(playerList, gamerTag);
+
+  return [playerStats, gameTime];
+}
+
+function getGamertagFromHTML(html) {
+  const userRegex = /([^\s]+)/g;
+  const user = $(".replay-stats__username", html).text();
+  const gamerTag = user.match(userRegex)[0];
+
+  return gamerTag;
+}
+
+function getPlayerListFromHTML(html) {
+  const regEx = /var roster = (\[.*?\]);/g;
+
+  //gameStats now contains the data for every single
+  //player in the match.
+  const gameStats = html.matchAll(regEx);
+
+  for (const match of gameStats) {
+    //If we don't do match[1], the data will have 'var roster'
+    //in front of it, and we can't JSON.parse. The actual JSON is group
+    //1 from the regex, therefore match[1] is parsed.
+    const playerList = JSON.parse(match[1]);
+
+    return playerList;
+  }
+}
+
+function getGameTimeFromHTML(html) {
+  const timeStamp = $(".replay-stats__timestamp", html).text();
+  console.log("Timestamp: " + timeStamp);
+
+  return timeStamp;
+}
+
+function getContestantStatsFromPlayerList(playerList, gamerTag) {
   for (var i = 0; i < playerList.length; i++) {
-    if (playerList[i].green.name == userName) {
-      console.log(playerList[i].green);
+    if (playerList[i].green.name == gamerTag) {
       return playerList[i].green;
     }
   }

@@ -9,24 +9,36 @@
 
 	<div class="jumbotron text-center">
 		<div class="container">
-			<h1>Showdown Saturday</h1>
-			<p>Please enter the appropriate information</p>
+			<h1>Showdown Saturday Winner Selection</h1>
+			<p>If the participants share a wotreplays link to their game
+				on Twitter, this tool can follow the link and scrape the 
+				data from wotreplays, so it's easy to verify if they 
+				met the requirements.
+			</p>
 		</div>
 	</div>
 
  <div class="container">
-	<!-- <h1>Postal Rate Calculator</h1> -->
-	<form action="/findWinners" method="get">
-		
-		<input type="number" name="xp" max="1500">XP Score to Beat </input><br>
-		<input type="number" name="twitterURL">Please enter the tweet id (EX: https://twitter.com/worldoftanks/status/1370408447636877312 Enter the numbers after status)</input><br>
-		<input type="date" name="startDate">Starting Date</input><br>
-		<input type="date" name="endDate">Ending Date</input><br>
-		<br><br>
-		<input type="submit" value="Get Result">
 
-	</form>
- </div>
+	<div class="row">
+		<div class="col-md-6">
+			<form class="form-horizontal" action="/findWinners" method="get">
+				<div class="form-group-lg">
+				<h3>Score To Beat Tweet ID:</h3>
+				<input class="form-control" type="number" name="twitterURL" placeholder="Ex: 1374450882792759299"></input>
+				<br>
+				<button type="submit" class="btn btn-default btn-lg">Find Winners</button><br><br>
+			</div>
+			</form>
+		</div>
 
+		<div class="col-md-6">
+			<h3>Tweet ID Example:</h3>
+			<img src="/img/twitterurl1.PNG" alt="input example" width="655">
+			<img src="/img/showdownTweet.PNG" alt="showdown saturday">
+		</div>
+	</div>
+	
+</div>
 </body>
 </html>

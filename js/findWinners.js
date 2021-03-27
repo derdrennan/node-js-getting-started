@@ -12,20 +12,22 @@ function setParams(request, response) {
   findWinners(response, xp, twitterURL, startDate, endDate);
 }
 
-//test twitter ID: 1372356771478528003;
+//test twitter ID:   1372356771478528003;
+//new test tweet ID: 1374866154372534279;
 
 async function findWinners(response, xp, twitterURL, startDate, endDate) {
   var listOfReplies = await twitterFetch.getTweetReplies(twitterURL);
+  //console.log("ListofReplies: " + listOfReplies);
 
   var replayURLlist = await getWotReplayURLs(listOfReplies);
+  //console.log("replayURLlist: " + replayURLlist);
 
   var playerStats = await getContestantStats(replayURLlist);
-  const stringify = JSON.stringify(playerStats, null, 2);
+  //console.log("playerStats: " + playerStats);
 
   //Set the params we will be returning to the view.
   const params = { playerStats };
 
-  //response.render("pages/twitterResult", params);
   response.render("pages/twitterResult", params);
 }
 

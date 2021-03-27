@@ -1,4 +1,4 @@
-var Twitter = require("twitter");
+var Twitter = require("twitter-v2");
 require("dotenv/config");
 
 const apikey = process.env.apikey;
@@ -14,58 +14,66 @@ var twitter = new Twitter({
 });
 
 async function getTweetReplies(ID) {
-  return new Promise((resolve, reject) => {
-    var params = { id: ID };
-    var replies = [];
+  var params = "conversation_id:" + ID;
+  var replies = [];
 
-    //Get the info needed for the second query
-    twitter.get(
-      "statuses/show",
-      params,
-      async function (error, tweets, response) {
-        if (!error) {
-          var name = tweets.user.screen_name;
-          var id_str = tweets.id_str;
-          //console.log(tweets);
+  const { data: tweets, meta, errors } = await twitter.get(
+    "tweets/search/recent",
+    {
+      query: params,
+      max_results: 10,
+      tweet: {
+        fields: ["created_at", "entities", "author_id", "conversation_id"],
+      },
+    }
+  );
 
-          //Searching tweets that match a specific username. Then we look at each one and if someone
-          //replied to that tweet, the 'in_reply_to_status_id' will match the 'id_str' so we save those.
-          twitter.get(
-            "search/tweets",
-            { q: name, count: 100, fields: "entities" },
-            async function (error, tweets, response) {
-              var counter = 0;
+  if (errors) {
+    console.log("Errors:", errors);
+    return;
+  }
 
-              if (!error) {
-                tweets.statuses.forEach((element) => {
-                  //console.log(element);
-                  counter++;
-                  if (element.in_reply_to_status_id_str == id_str) {
-                    //replies.push(element.text);
-                    //console.log(element.entities.urls[0].expanded_url);
-                    replies.push([
-                      element.entities.urls[0].expanded_url,
-                      element.user.screen_name,
-                    ]);
-                  }
-                  if (counter == tweets.statuses.length) {
-                    //console.log('Right before the return: ' + replies);
-                    resolve(replies);
-                  }
-                });
-              } else {
-                console.log(error);
-                reject(err);
-              }
-            }
-          );
-        } else {
-          console.log(error);
-          reject(err);
-        }
+  for (const tweet of tweets) {
+    //If the tweet doesn't have a URL, skip to the next one
+    if (!tweet?.entities?.urls?.[0]) {
+      continue;
+    }
+
+    //If a person tweets multiple URLs in the same tweet, we will
+    //look at each one, and only push it to the replies array if
+    //it is a wotreplays.com URL.
+    for (let index = 0; index < tweet.entities.urls.length; index++) {
+      const element = tweet.entities.urls[index].expanded_url;
+      var bool = verifyURLisToWotreplay(element);
+
+      if (bool == true) {
+        replies.push([element, "username"]);
+      } else {
+        continue;
       }
-    );
+    }
+  }
+
+  console.log(meta);
+
+  return replies;
+}
+
+if (require.getTweetReplies === module) {
+  getTweetReplies(ID).catch((error) => {
+    console.error(error);
+    process.exit(1);
   });
+}
+
+function verifyURLisToWotreplay(url) {
+  const regex = /(https?|ftp):\/\/wotreplays.eu?([^\s\/?\.#-]+\.?)+(\/[^\s]*)?(?=\s|$)/;
+
+  if (regex.test(url)) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 module.exports = { getTweetReplies: getTweetReplies };

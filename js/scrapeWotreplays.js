@@ -58,7 +58,7 @@ function getPlayerListFromHTML(html) {
 
 function getGameTimeFromHTML(html) {
   const timeStamp = $(".replay-stats__timestamp", html).text();
-  console.log("Timestamp: " + timeStamp);
+  //console.log("Timestamp: " + timeStamp);
 
   return timeStamp;
 }

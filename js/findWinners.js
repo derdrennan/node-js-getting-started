@@ -17,10 +17,10 @@ function setParams(request, response) {
 
 async function findWinners(response, xp, twitterURL, startDate, endDate) {
   var listOfReplies = await twitterFetch.getTweetReplies(twitterURL);
-  //console.log("ListofReplies: " + listOfReplies);
+  console.log("ListofReplies: " + listOfReplies);
 
   var replayURLlist = await getWotReplayURLs(listOfReplies);
-  //console.log("replayURLlist: " + replayURLlist);
+  console.log("replayURLlist: " + replayURLlist);
 
   var playerStats = await getContestantStats(replayURLlist);
   //console.log("playerStats: " + playerStats);

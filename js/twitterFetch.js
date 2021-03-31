@@ -14,17 +14,18 @@ var twitter = new Twitter({
 });
 
 async function getTweetReplies(ID) {
-  var params = "conversation_id:" + ID;
+  var params = ["conversation_id:" + ID];
   var replies = [];
 
-  const { data: tweets, meta, errors } = await twitter.get(
+  const { data: tweets, includes, meta, errors } = await twitter.get(
     "tweets/search/recent",
     {
       query: params,
       max_results: 10,
       tweet: {
-        fields: ["created_at", "entities", "author_id", "conversation_id"],
+        fields: ["entities", "author_id"],
       },
+      expansions: ["author_id"],
     }
   );
 
@@ -33,28 +34,38 @@ async function getTweetReplies(ID) {
     return;
   }
 
-  for (const tweet of tweets) {
-    //If the tweet doesn't have a URL, skip to the next one
+  //console.log(includes);
+
+  tweets.forEach((tweet) => {
     if (!tweet?.entities?.urls?.[0]) {
-      continue;
+      return;
     }
+
+    //console.log(tweet);
 
     //If a person tweets multiple URLs in the same tweet, we will
     //look at each one, and only push it to the replies array if
-    //it is a wotreplays.com URL.
+    //it is a wotreplays.com URL. For now, we just assume the client
+    //will sort the list and see if there are duplicate gamertags.
     for (let index = 0; index < tweet.entities.urls.length; index++) {
-      const element = tweet.entities.urls[index].expanded_url;
-      var bool = verifyURLisToWotreplay(element);
+      const wotreplayURL = tweet.entities.urls[index].expanded_url;
 
-      if (bool == true) {
-        replies.push([element, "username"]);
+      if (URLisToWotreplays(wotreplayURL)) {
+        var username = "";
+        includes.users.forEach((userObject) => {
+          if (userObject.id == tweet.author_id) {
+            username = userObject.username;
+          }
+        });
+
+        replies.push([wotreplayURL, username]);
       } else {
-        continue;
+        return;
       }
     }
-  }
+  });
 
-  console.log(meta);
+  //console.log(meta);
 
   return replies;
 }
@@ -66,7 +77,7 @@ if (require.getTweetReplies === module) {
   });
 }
 
-function verifyURLisToWotreplay(url) {
+function URLisToWotreplays(url) {
   const regex = /(https?|ftp):\/\/wotreplays.eu?([^\s\/?\.#-]+\.?)+(\/[^\s]*)?(?=\s|$)/;
 
   if (regex.test(url)) {

@@ -42,7 +42,6 @@ async function getTweetReplies(ID) {
     }
 
     //console.log(tweet);
-    console.log(tweet);
 
     //If a person tweets multiple URLs in the same tweet, we will
     //look at each one, and only push it to the replies array if

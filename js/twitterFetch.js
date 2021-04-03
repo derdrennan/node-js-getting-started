@@ -42,6 +42,7 @@ async function getTweetReplies(ID) {
     }
 
     //console.log(tweet);
+    console.log(tweet);
 
     //If a person tweets multiple URLs in the same tweet, we will
     //look at each one, and only push it to the replies array if
@@ -49,6 +50,7 @@ async function getTweetReplies(ID) {
     //will sort the list and see if there are duplicate gamertags.
     for (let index = 0; index < tweet.entities.urls.length; index++) {
       const wotreplayURL = tweet.entities.urls[index].expanded_url;
+      //console.log("URL: " + wotreplayURL);
 
       if (URLisToWotreplays(wotreplayURL)) {
         var username = "";
@@ -59,8 +61,6 @@ async function getTweetReplies(ID) {
         });
 
         replies.push([wotreplayURL, username]);
-      } else {
-        return;
       }
     }
   });

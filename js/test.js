@@ -1,65 +1,23 @@
-var Twitter = require("twitter-v2");
-require("dotenv/config");
+const rp = require("request-promise");
+const $ = require("cheerio");
 
-const apikey = process.env.apikey;
-const apikeysecret = process.env.apikeysecret;
-const accesstoken = process.env.accesstoken;
-const accesstokensecret = process.env.accesstokensecret;
+//const html = "http://wotreplays.eu/site/5834962#highway-tru_voodoo-t49";
+const html =
+  "http://wotreplays.eu/site/5766092#serene_coast-soveren_pl-ikv_103";
 
-var twitter = new Twitter({
-  consumer_key: apikey,
-  consumer_secret: apikeysecret,
-  access_token_key: accesstoken,
-  access_token_secret: accesstokensecret,
-});
+const userRegex = /([^\s]+)/g;
+const user = $(".replay-stats__username", html).text();
+const gamerTag = user.match(userRegex)[0];
+console.log("user: " + user);
+console.log("gamerTag: " + gamerTag);
 
-// Search for Tweets within the past seven days
-// https://developer.twitter.com/en/docs/twitter-api/tweets/search/quick-start/recent-search
-
-const needle = require("needle");
-
-// The code below sets the bearer token from your environment variables
-// To set environment variables on macOS or Linux, run the export command below from the terminal:
-// export BEARER_TOKEN='YOUR-TOKEN'
-const token = process.env.BEARER_TOKEN;
-
-const endpointUrl = "https://api.twitter.com/2/tweets/search/recent";
-
-async function getRequest() {
-  // Edit query parameters below
-  // specify a search query, and any additional fields that are required
-  // by default, only the Tweet ID and text fields are returned
-  const params = {
-    query: "conversation_id:1374866154372534279",
-    "tweet.fields": "author_id,entities",
-    "user.fields": "username",
-    expansions: "author_id",
-  };
-
-  const res = await needle("get", endpointUrl, params, {
-    headers: {
-      "User-Agent": "v2RecentSearchJS",
-      authorization: `Bearer ${token}`,
-    },
-  });
-
-  if (res.body) {
-    return res.body;
-  } else {
-    throw new Error("Unsuccessful request");
-  }
-}
-
-(async () => {
-  try {
-    // Make request
-    const response = await getRequest();
-    console.dir(response, {
-      depth: null,
-    });
-  } catch (e) {
-    console.log(e);
-    process.exit(-1);
-  }
-  process.exit();
-})();
+//If the user submitted a replay that doesn't show data due to leaving the
+//game early, this is how we need to grab the name, because the HTML is different
+//on this page.
+// if (!user) {
+//   console.log("Inside IF check");
+//   const user1 = $("b-replay__player", html).text();
+//   console.log("user: " + user1);
+//   const gamerTag = user.match(userRegex)[0];
+//   console.log(gamerTag);
+// }

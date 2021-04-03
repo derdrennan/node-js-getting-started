@@ -32,11 +32,19 @@ function getContestantGameInfo(html) {
 }
 
 function getGamertagFromHTML(html) {
-  const userRegex = /([^\s]+)/g;
-  const user = $(".replay-stats__username", html).text();
-  const gamerTag = user.match(userRegex)[0];
+  try {
+    const userRegex = /([^\s]+)/g;
+    const user = $(".replay-stats__username", html).text();
+    const gamerTag = user.match(userRegex)[0];
 
-  return gamerTag;
+    return gamerTag;
+  } catch (error) {
+    //If the username isn't found, that means the replay data
+    //is null, so we will return invalid which we can check later.
+    //Example of bad replay: http://wotreplays.eu/site/5834962#highway-tru_voodoo-t49
+    gamerTag = null;
+    return gamerTag;
+  }
 }
 
 function getPlayerListFromHTML(html) {
@@ -57,15 +65,32 @@ function getPlayerListFromHTML(html) {
 }
 
 function getGameTimeFromHTML(html) {
-  const timeStamp = $(".replay-stats__timestamp", html).text();
-  //console.log("Timestamp: " + timeStamp);
-
-  return timeStamp;
+  try {
+    const timeStamp = $(".replay-stats__timestamp", html).text();
+    return timeStamp;
+  } catch (error) {
+    timeStamp = "N/A";
+    return timeStamp;
+  }
 }
 
 function getContestantStatsFromPlayerList(playerList, gamerTag) {
   for (var i = 0; i < playerList.length; i++) {
+    //This handles the issue of a user submitting a
+    //replay, but they left the game early, so the HTML
+    //is different, and all game stats are null.
+    //Example of a bad replay: http://wotreplays.eu/site/5834962#highway-tru_voodoo-t49
+    if (gamerTag == null) {
+      var invalidReplay = {
+        name: "N/A",
+        xp: "N/A",
+        tank: "N/A",
+      };
+      return invalidReplay;
+    }
+
     if (playerList[i].green.name == gamerTag) {
+      console.log(playerList[i].green);
       return playerList[i].green;
     }
   }

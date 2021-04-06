@@ -77,7 +77,7 @@ function getGameTimeFromHTML(html) {
 function getContestantStatsFromPlayerList(playerList, gamerTag) {
   for (var i = 0; i < playerList.length; i++) {
     //This handles the issue of a user submitting a
-    //replay, but they left the game early, so the HTML
+    //replay, but they left the game early so the HTML
     //is different, and all game stats are null.
     //Example of a bad replay: http://wotreplays.eu/site/5834962#highway-tru_voodoo-t49
     if (gamerTag == null) {

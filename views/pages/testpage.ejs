@@ -3,41 +3,51 @@
   <head>
     <title>Showdown Saturday Results</title>
     <%- include ("../partials/header.ejs") %>
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.css"
-    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
     <script
       type="text/javascript"
-      charset="utf8"
-      src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.js"
+      src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
     ></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
-    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
     <script src="https://res.cloudinary.com/dxfq3iotg/raw/upload/v1569818907/jquery.table2excel.min.js"></script>
-  </head>
 
+    <link
+      href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css"
+      rel="stylesheet"
+    />
+  </head>
   <body>
     <h1>Showdown Saturday Results</h1>
     <div class="container">
       <div class="col-md-4 text-right">
         <button id="exporttable" class="btn btn-primary">Export</button>
       </div>
-      <table class="table table-striped" id="contestantTable">
+
+      <table
+        class="table table-striped"
+        id="contestantTable"
+        data-toggle="contestantTable"
+        data-show-export="true"
+        data-click-to-select="true"
+        data-toolbar="#toolbar"
+        data-show-toggle="true"
+        data-show-columns="true"
+      >
         <thead>
           <tr>
-            <th>Gamertag</th>
-            <th>Base XP</th>
-            <th>Tank</th>
-            <th>Twitter Handle</th>
-            <th>Time Played</th>
+            <th data-checkbox="true" data-checkbox-enabled="true"></th>
+            <th data-field="gamertag">Gamertag</th>
+            <th data-field="XP" data-sortable="true">Base XP</th>
+            <th data-field="tank">Tank</th>
+            <th data-field="twitterName">Twitter Handle</th>
+            <th data-field="time">Time Played</th>
           </tr>
         </thead>
         <tbody>
           <% for (var i = 0; i < playerStats.length; i++) { %>
           <tr>
+            <td></td>
             <td><%= playerStats[i][0].name %></td>
             <td><%= playerStats[i][0].xp %></td>
             <td><%= playerStats[i][0].tank %></td>
@@ -64,7 +74,7 @@
               exclude: ".noExl",
               name: "Excel Document Name",
               filename:
-                "BBBootstrap" +
+                "showdownSaturday" +
                 new Date().toISOString().replace(/[\-\:\.]/g, "") +
                 ".xls",
               fileext: ".xls",

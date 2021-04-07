@@ -20,17 +20,30 @@
   </head>
 
   <body>
-    <h1>Showdown Saturday Results</h1>
-    <div class="container">
-      <div class="col-md-4 text-right">
-        <button id="exporttable" class="btn btn-primary">Export</button>
+    <%- include ("../partials/nav.ejs") %>
+
+    <div class="jumbotron text-center">
+      <div class="container">
+        <h1>Showdown Saturday Results</h1>
       </div>
-      <table class="table table-striped" id="contestantTable">
+    </div>
+
+    <div class="container">
+      <div class="col-1 text-left">
+        <button id="exporttable" class="btn btn-primary my-2">Export</button
+        ><br />
+      </div>
+    </div>
+
+    <div class="container">
+      <table class="table" id="contestantTable">
         <thead>
           <tr>
             <th>Gamertag</th>
             <th>Base XP</th>
             <th>Tank</th>
+            <th>Damage</th>
+            <th>Assist</th>
             <th>Twitter Handle</th>
             <th>Time Played</th>
           </tr>
@@ -41,6 +54,8 @@
             <td><%= playerStats[i][0].name %></td>
             <td><%= playerStats[i][0].xp %></td>
             <td><%= playerStats[i][0].tank %></td>
+            <td><%= playerStats[i][0].damageDealt %></td>
+            <td><%= playerStats[i][0].vehicleDamageAssist %></td>
             <td><%= playerStats[i][1] %></td>
             <td><%= playerStats[i][2] %></td>
           </tr>
@@ -64,7 +79,7 @@
               exclude: ".noExl",
               name: "Excel Document Name",
               filename:
-                "BBBootstrap" +
+                "Showdown" +
                 new Date().toISOString().replace(/[\-\:\.]/g, "") +
                 ".xls",
               fileext: ".xls",
